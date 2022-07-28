@@ -497,9 +497,13 @@ public class DispatcherServlet extends FrameworkServlet {
 		initMultipartResolver(context);
 		initLocaleResolver(context);
 		initThemeResolver(context);
+		//初始化HandlerMapping的过程
 		initHandlerMappings(context);
+		//初始化HandlerAdapter的过程
 		initHandlerAdapters(context);
+		//初始化HandlerExceptionResolver的过程
 		initHandlerExceptionResolvers(context);
+		//
 		initRequestToViewNameTranslator(context);
 		initViewResolvers(context);
 		initFlashMapManager(context);
@@ -586,18 +590,21 @@ public class DispatcherServlet extends FrameworkServlet {
 	 */
 	private void initHandlerMappings(ApplicationContext context) {
 		this.handlerMappings = null;
-
+		//判断是从DispatcherServlet当前的上下文对象还是所有上下文对象（包含父上下文对象）中拿所有的HandlerMapping的bean，默认是从所有的IOC容器中取
 		if (this.detectAllHandlerMappings) {
 			// Find all HandlerMappings in the ApplicationContext, including ancestor contexts.
+			//查找 ApplicationContext 中的所有 HandlerMapping，包括祖先上下文
 			Map<String, HandlerMapping> matchingBeans =
 					BeanFactoryUtils.beansOfTypeIncludingAncestors(context, HandlerMapping.class, true, false);
 			if (!matchingBeans.isEmpty()) {
 				this.handlerMappings = new ArrayList<>(matchingBeans.values());
 				// We keep HandlerMappings in sorted order.
+				//按排序顺序保持 HandlerMappings
 				AnnotationAwareOrderComparator.sort(this.handlerMappings);
 			}
 		}
 		else {
+			//可以根据名称从当前的IOC容器中通过getBean获取handlerMapping，仅在“detectAllHandlerMappings”关闭时使用。
 			try {
 				HandlerMapping hm = context.getBean(HANDLER_MAPPING_BEAN_NAME, HandlerMapping.class);
 				this.handlerMappings = Collections.singletonList(hm);
@@ -609,6 +616,7 @@ public class DispatcherServlet extends FrameworkServlet {
 
 		// Ensure we have at least one HandlerMapping, by registering
 		// a default HandlerMapping if no other mappings are found.
+		//确保我们至少有一个 HandlerMapping，如果没有找到其他映射，则注册一个默认的 HandlerMapping，这些默认的值设置在DispatcherServlet.properties文件中
 		if (this.handlerMappings == null) {
 			this.handlerMappings = getDefaultStrategies(context, HandlerMapping.class);
 			if (logger.isTraceEnabled()) {
@@ -632,7 +640,7 @@ public class DispatcherServlet extends FrameworkServlet {
 	 */
 	private void initHandlerAdapters(ApplicationContext context) {
 		this.handlerAdapters = null;
-
+		//此地方的逻辑与初始化HandlerMapping一致
 		if (this.detectAllHandlerAdapters) {
 			// Find all HandlerAdapters in the ApplicationContext, including ancestor contexts.
 			Map<String, HandlerAdapter> matchingBeans =
@@ -655,6 +663,7 @@ public class DispatcherServlet extends FrameworkServlet {
 
 		// Ensure we have at least some HandlerAdapters, by registering
 		// default HandlerAdapters if no other adapters are found.
+		//此逻辑也与初始化HandlerMapping一致，如果没有handlerAdapters则从DispatcherServlet.properties文件中获取默认的HandlerAdapter
 		if (this.handlerAdapters == null) {
 			this.handlerAdapters = getDefaultStrategies(context, HandlerAdapter.class);
 			if (logger.isTraceEnabled()) {

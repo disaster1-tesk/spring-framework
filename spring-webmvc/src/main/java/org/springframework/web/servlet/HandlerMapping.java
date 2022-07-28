@@ -167,6 +167,8 @@ public interface HandlerMapping {
 	 * any interceptors, or {@code null} if no mapping found
 	 * @throws Exception if there is an internal error
 	 */
+	//通过调用getHandler方法获取HandlerExecutionChain对象，这是典型的Command（命令）模式的使用，这个HandlerExecutionChain不但持有Handler本身
+	//还包含了处理这个HTTP请求相关的拦截器
 	@Nullable
 	HandlerExecutionChain getHandler(HttpServletRequest request) throws Exception;
 

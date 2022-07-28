@@ -141,6 +141,7 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping i
 	@Override
 	@Nullable
 	protected Object getHandlerInternal(HttpServletRequest request) throws Exception {
+		//从request中得到请求的URL路径
 		String lookupPath = initLookupPath(request);
 		Object handler;
 		if (usesPathPatterns()) {
@@ -148,6 +149,7 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping i
 			handler = lookupHandler(path, lookupPath, request);
 		}
 		else {
+			//将得到URL路径与Handler进行匹配，得到对应的Handler，如果没有对应的Handler，返回null，这样默认的Handler会被使用
 			handler = lookupHandler(lookupPath, request);
 		}
 		if (handler == null) {
@@ -413,15 +415,19 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping i
 		Object resolvedHandler = handler;
 
 		// Eagerly resolve handler if referencing singleton via name.
+		// 如果是通过bean的名称进行映射，那就直接从容器中获取handler
 		if (!this.lazyInitHandlers && handler instanceof String) {
 			String handlerName = (String) handler;
+			//返回与此对象关联的 ApplicationContext。
 			ApplicationContext applicationContext = obtainApplicationContext();
+			//获取单例bean
 			if (applicationContext.isSingleton(handlerName)) {
 				resolvedHandler = applicationContext.getBean(handlerName);
 			}
 		}
 
 		Object mappedHandler = this.handlerMap.get(urlPath);
+		//如果handlerMap已经有此HandlerBean则会抛出异常
 		if (mappedHandler != null) {
 			if (mappedHandler != resolvedHandler) {
 				throw new IllegalStateException(
@@ -430,20 +436,24 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping i
 			}
 		}
 		else {
+			//处理URL是"/"的映射，把这个"/"映射的controller设置到rootHandler中
 			if (urlPath.equals("/")) {
 				if (logger.isTraceEnabled()) {
 					logger.trace("Root mapping to " + getHandlerDescription(handler));
 				}
 				setRootHandler(resolvedHandler);
 			}
+			//处理URL是"/*"的映射，把这个"/*"映射的controller设置到defaultHandler中
 			else if (urlPath.equals("/*")) {
 				if (logger.isTraceEnabled()) {
 					logger.trace("Default mapping to " + getHandlerDescription(handler));
 				}
 				setDefaultHandler(resolvedHandler);
 			}
+			//处理正常的URL映射，设置handlerMap的key和value，分别对应于URL和映射的controller
 			else {
 				this.handlerMap.put(urlPath, resolvedHandler);
+				//通过PathPatternParser去解析相关URL链接
 				if (getPatternParser() != null) {
 					this.pathPatternHandlerMap.put(getPatternParser().parse(urlPath), resolvedHandler);
 				}

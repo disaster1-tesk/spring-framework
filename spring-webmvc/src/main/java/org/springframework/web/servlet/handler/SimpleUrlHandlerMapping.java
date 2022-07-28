@@ -150,17 +150,22 @@ public class SimpleUrlHandlerMapping extends AbstractUrlHandlerMapping {
 			logger.trace("No patterns in " + formatMappingName());
 		}
 		else {
+			//对urlMap进行遍历
 			urlMap.forEach((url, handler) -> {
 				// Prepend with slash if not already present.
+				// 判断url是否是/开头，如果不是则自动进行添加
 				if (!url.startsWith("/")) {
 					url = "/" + url;
 				}
 				// Remove whitespace from handler bean name.
+				//删除 bean 名称空格
 				if (handler instanceof String) {
 					handler = ((String) handler).trim();
 				}
+				//调用基类进行相关Handler的注册
 				registerHandler(url, handler);
 			});
+			//设置Controller的日志Map
 			logMappings();
 		}
 	}
