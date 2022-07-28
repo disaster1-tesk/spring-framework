@@ -110,6 +110,7 @@ class BeanDefinitionValueResolver {
 		// to another bean to be resolved.
 		if (value instanceof RuntimeBeanReference) {
 			RuntimeBeanReference ref = (RuntimeBeanReference) value;
+			//解析引用类型依赖
 			return resolveReference(argName, ref);
 		}
 		else if (value instanceof RuntimeBeanNameReference) {
@@ -303,6 +304,7 @@ class BeanDefinitionValueResolver {
 		try {
 			Object bean;
 			Class<?> beanType = ref.getBeanType();
+			//如果ref是在双亲IOC容器中，那就到双亲IOC容器中去获取
 			if (ref.isToParent()) {
 				BeanFactory parent = this.beanFactory.getParentBeanFactory();
 				if (parent == null) {
@@ -318,6 +320,7 @@ class BeanDefinitionValueResolver {
 					bean = parent.getBean(String.valueOf(doEvaluate(ref.getBeanName())));
 				}
 			}
+			//在当前IOC容器中去获取Bean，这里会触发一个getBean的过程，如果依赖注入没有发生，这里会触发相应的依赖注入的发生
 			else {
 				String resolvedName;
 				if (beanType != null) {

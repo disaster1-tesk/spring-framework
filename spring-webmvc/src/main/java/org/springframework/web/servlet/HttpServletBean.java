@@ -150,6 +150,7 @@ public abstract class HttpServletBean extends HttpServlet implements Environment
 
 		// Set bean properties from init parameters.
 		PropertyValues pvs = new ServletConfigPropertyValues(getServletConfig(), this.requiredProperties);
+		//如果有设置servlet的初始化参数，进行相关赋值操作
 		if (!pvs.isEmpty()) {
 			try {
 				BeanWrapper bw = PropertyAccessorFactory.forBeanPropertyAccess(this);
@@ -167,6 +168,7 @@ public abstract class HttpServletBean extends HttpServlet implements Environment
 		}
 
 		// Let subclasses do whatever initialization they like.
+		//这里是由DispatcherServlet所实现，在此方法中进行springMVC相关的调用逻辑
 		initServletBean();
 	}
 
@@ -220,7 +222,7 @@ public abstract class HttpServletBean extends HttpServlet implements Environment
 
 			Set<String> missingProps = (!CollectionUtils.isEmpty(requiredProperties) ?
 					new HashSet<>(requiredProperties) : null);
-
+			//获取通过<servlet>的子标签<init-param>设置的值，对servlet进行一些初始化操作
 			Enumeration<String> paramNames = config.getInitParameterNames();
 			while (paramNames.hasMoreElements()) {
 				String property = paramNames.nextElement();

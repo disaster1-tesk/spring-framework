@@ -276,8 +276,10 @@ public class ContextLoader {
 			// Store context in local instance variable, to guarantee that
 			// it is available on ServletContext shutdown.
 			if (this.context == null) {
+				//创建专门为web容器所使用的IOC容器上下文对象XmlWebApplicationContext
 				this.context = createWebApplicationContext(servletContext);
 			}
+			//对上下文对象进行一些基本的判断和初始化，如：设置父容器和调用refresh进行容器的初始化
 			if (this.context instanceof ConfigurableWebApplicationContext) {
 				ConfigurableWebApplicationContext cwac = (ConfigurableWebApplicationContext) this.context;
 				if (!cwac.isActive()) {
@@ -289,9 +291,11 @@ public class ContextLoader {
 						ApplicationContext parent = loadParentContext(servletContext);
 						cwac.setParent(parent);
 					}
+					//在这里进行IOC容器的初始化相关的操作Refresh方法的调用
 					configureAndRefreshWebApplicationContext(cwac, servletContext);
 				}
 			}
+			//这里是通过常量来索引在ServletContext中存储的根上下文的
 			servletContext.setAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, this.context);
 
 			ClassLoader ccl = Thread.currentThread().getContextClassLoader();
@@ -329,6 +333,7 @@ public class ContextLoader {
 	 * @see ConfigurableWebApplicationContext
 	 */
 	protected WebApplicationContext createWebApplicationContext(ServletContext sc) {
+		//这里判断使用什么样的类在web容器作为IOC容器，默认是XmlWebApplicationContext
 		Class<?> contextClass = determineContextClass(sc);
 		if (!ConfigurableWebApplicationContext.class.isAssignableFrom(contextClass)) {
 			throw new ApplicationContextException("Custom context class [" + contextClass.getName() +
@@ -357,6 +362,9 @@ public class ContextLoader {
 			}
 		}
 		else {
+			//contextClassName的获取是从ContextLoader.properties文件中读取出来的，而ContextLoader.properties中的内容为
+			//org.springframework.web.context.WebApplicationContext=org.springframework.web.context.support.XmlWebApplicationContext
+			//所以这里得到的上下文对象是指定的XmlWebApplicationContext
 			contextClassName = defaultStrategies.getProperty(WebApplicationContext.class.getName());
 			try {
 				return ClassUtils.forName(contextClassName, ContextLoader.class.getClassLoader());

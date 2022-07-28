@@ -62,6 +62,7 @@ import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 public class XmlWebApplicationContext extends AbstractRefreshableWebApplicationContext {
 
 	/** Default config location for the root context. */
+	//这里是设置默认BeanDefinition的地方，如果不指定其他文件，IOC容器会从这里读取BeanDefinition来初始化IOC容器
 	public static final String DEFAULT_CONFIG_LOCATION = "/WEB-INF/applicationContext.xml";
 
 	/** Default prefix for building a config location for a namespace. */
@@ -85,6 +86,7 @@ public class XmlWebApplicationContext extends AbstractRefreshableWebApplicationC
 		// Configure the bean definition reader with this context's
 		// resource loading environment.
 		beanDefinitionReader.setEnvironment(getEnvironment());
+		//这里设置ResourceLoader是因为XmlWebApplicationContext是DefaultResource的子类，所以这里同样会使用DefaultResourceLoader来定位BeanDefinition
 		beanDefinitionReader.setResourceLoader(this);
 		beanDefinitionReader.setEntityResolver(new ResourceEntityResolver(this));
 
@@ -119,6 +121,7 @@ public class XmlWebApplicationContext extends AbstractRefreshableWebApplicationC
 	 * @see #getResourcePatternResolver
 	 */
 	protected void loadBeanDefinitions(XmlBeanDefinitionReader reader) throws IOException {
+		//这里取得Resource位置的地方， 使用来设定的默认配置位置，默认的配置是/WEB-INF/applicationContext.xml
 		String[] configLocations = getConfigLocations();
 		if (configLocations != null) {
 			for (String configLocation : configLocations) {
