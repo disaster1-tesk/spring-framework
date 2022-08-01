@@ -173,9 +173,11 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 				if (node instanceof Element) {
 					Element ele = (Element) node;
 					if (delegate.isDefaultNamespace(ele)) {
+						//这里是用于解析默认的spring相关的标签，如果xml文件中没有引入新的xsi
 						parseDefaultElement(ele, delegate);
 					}
 					else {
+						//解析不是默认的spring相关的标签，像aop、context等相关的标签
 						delegate.parseCustomElement(ele);
 					}
 				}
