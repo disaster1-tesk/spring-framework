@@ -97,7 +97,7 @@ public class ContextLoaderListener extends ContextLoader implements ServletConte
 
 	/**
 	 * Initialize the root web application context.
-	 * 这里是web容器启动的入口，此方法是实现自ServletContextListener，ServletContextListener会在tomcat启动的时候进行相关初始化的操作
+	 * 这里是web容器启动的入口，此方法是实现自ServletContextListener，ServletContextListener会在tomcat启动的时候进行相关初始化的操作，测试一下
 	 */
 	@Override
 	public void contextInitialized(ServletContextEvent event) {
