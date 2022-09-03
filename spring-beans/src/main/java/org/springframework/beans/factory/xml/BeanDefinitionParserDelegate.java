@@ -1405,13 +1405,13 @@ public class BeanDefinitionParserDelegate {
 		if (namespaceUri == null) {
 			return null;
 		}
-		//通过获取的相关xsi的url通过NamespaceHandlerResolver对象去解析获取NamespaceHandler对象
+		//通过获取的相关xsi的url通过NamespaceHandlerResolver对象去解析获取NamespaceHandler对象，在resolve方法中会调用NameSpaceHandler中的init方法进行初始化
 		NamespaceHandler handler = this.readerContext.getNamespaceHandlerResolver().resolve(namespaceUri);
 		if (handler == null) {
 			error("Unable to locate Spring NamespaceHandler for XML schema namespace [" + namespaceUri + "]", ele);
 			return null;
 		}
-		//通过NamespaceHandlerSupport获取对应的BeanDefinitionParser解析器去解析相应的xml对象进而获取到相关的BeanDefinition
+		//通过NamespaceHandlerSupport获取对应的BeanDefinitionParser解析器去解析相应的xml对象进而获取到相关的BeanDefinition,spring提供的aop入口是通过init方法进行调用
 		return handler.parse(ele, new ParserContext(this.readerContext, this, containingBd));
 	}
 
